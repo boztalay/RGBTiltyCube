@@ -1,0 +1,55 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Wed Dec 22 01:41:52 2010
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                    START       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000002    program   0x000004
+                     MAIN       code   0x000004    program   0x00005e
+                    .code       code   0x000033    program   0x000018
+.config_2007_RGB_SR_TEST.O       code   0x002007    program   0x000002
+                   .udata      udata   0x000040       data   0x000006
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x00003e      
+                            0x002007    0x002007      
+            64 out of 1029 program addresses used, program memory utilization is 6%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    START   0x000004    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+               _MAIN_002E   0x000032    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+               delayX10ms   0x000001    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+             delayX10ms_R   0x000033    program     extern C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                     dly1   0x000038    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                     dly2   0x000035    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                     loop   0x00000b    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+                      dc1   0x000040       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                      dc2   0x000041       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                      dc3   0x000043       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               delayX10ms   0x000001    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+                    START   0x000004    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+                     loop   0x00000b    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+               _MAIN_002E   0x000032    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\RGB_SR_test.asm
+             delayX10ms_R   0x000033    program     extern C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                     dly2   0x000035    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                     dly1   0x000038    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                      dc1   0x000040       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                      dc2   0x000041       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+                      dc3   0x000043       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\RGB_SR_test\delayX10ms.asm
+
+

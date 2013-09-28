@@ -1,0 +1,76 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Wed Dec 22 16:40:50 2010
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                    START       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+                     MAIN       code   0x000003    program   0x0000d6
+.config_2007_PIC12F615_TEMPLATE.O       code   0x002007    program   0x000002
+                   .udata      udata   0x000040       data   0x00000b
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x00006d      
+                            0x002007    0x002007      
+            111 out of 1029 program addresses used, program memory utilization is 10%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    START   0x000003    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  adc_tst   0x000042    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 continue   0x000068    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                cycle_end   0x000041    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                cycle_top   0x000013    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                     dly1   0x00003c    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 make_blu   0x000066    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 make_grn   0x000063    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 make_red   0x000060    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 step_top   0x00001b    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 ADC_RESH   0x000049       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  blu_brt   0x000041       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                   blu_on   0x000044       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                color_sel   0x00004a       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  grn_brt   0x000042       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                   grn_on   0x000045       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  out_reg   0x000047       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  red_brt   0x000040       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                   red_on   0x000043       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                    steps   0x000046       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                     temp   0x000048       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    START   0x000003    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                cycle_top   0x000013    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 step_top   0x00001b    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                     dly1   0x00003c    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                cycle_end   0x000041    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  adc_tst   0x000042    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 make_red   0x000060    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 make_grn   0x000063    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 make_blu   0x000066    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 continue   0x000068    program     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  red_brt   0x000040       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  blu_brt   0x000041       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  grn_brt   0x000042       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                   red_on   0x000043       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                   blu_on   0x000044       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                   grn_on   0x000045       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                    steps   0x000046       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                  out_reg   0x000047       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                     temp   0x000048       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                 ADC_RESH   0x000049       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+                color_sel   0x00004a       data     static C:\Users\Ben\Desktop\Folders\Microcontrollers\Projects\PIC12F615\RGB_cube\PIC12F615_template.asm
+
+

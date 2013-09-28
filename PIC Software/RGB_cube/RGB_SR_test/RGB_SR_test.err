@@ -1,0 +1,4 @@
+Message[312] C:\USERS\BEN\DESKTOP\FOLDERS\MICROCONTROLLERS\PROJECTS\PIC12F615\RGB_CUBE\RGB_SR_TEST\RGB_SR_TEST.ASM 60 : Page or Bank selection not needed for this device.  No code generated.
+Message[312] C:\USERS\BEN\DESKTOP\FOLDERS\MICROCONTROLLERS\PROJECTS\PIC12F615\RGB_CUBE\RGB_SR_TEST\RGB_SR_TEST.ASM 65 : Page or Bank selection not needed for this device.  No code generated.
+Message[302] C:\USERS\BEN\DESKTOP\FOLDERS\MICROCONTROLLERS\PROJECTS\PIC12F615\RGB_CUBE\RGB_SR_TEST\RGB_SR_TEST.ASM 79 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\BEN\DESKTOP\FOLDERS\MICROCONTROLLERS\PROJECTS\PIC12F615\RGB_CUBE\RGB_SR_TEST\RGB_SR_TEST.ASM 82 : Register in operand not in bank 0.  Ensure that bank bits are correct.

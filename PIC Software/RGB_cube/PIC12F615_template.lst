@@ -1,0 +1,590 @@
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;*******************************************************************************
+                      00002 ;                                                                              *
+                      00003 ;    Filename:         RGB_cube.asm                                            *
+                      00004 ;    Date:             December 21, 2010                                       *
+                      00005 ;    File Version:     0.1                                                     *
+                      00006 ;                                                                              *
+                      00007 ;    Author:           Ben Oztalay                                             *
+                      00008 ;                                                                              *
+                      00009 ;*******************************************************************************
+                      00010 ;                                                                              *
+                      00011 ;    Description:      The microcontroller will accept input from an           *
+                      00012 ;                      accelerometer, then change the color of RGB LEDs using  *
+                      00013 ;                      PWM to create a plexiglass cube that changes color as   *
+                      00014 ;                      it's tilted                                             *
+                      00015 ;                                                                              *
+                      00016 ;*******************************************************************************
+                      00017 ;                                                                              *
+                      00018 ;    Revision Information:                                                     *
+                      00019 ;                      0.1 - File created                                      *
+                      00020 ;                                                                              *
+                      00021 ;                                                                              *
+                      00022 ;                                                                              *
+                      00023 ;*******************************************************************************
+                      00024 ;                                                                              *
+                      00025 ;    Pin Assignments:  Pin 7 - AN0, Axis 1 of accelerometer                                *
+                      00026 ;                      Pin 6 - AN1, Axis 2 of accelerometer                    *
+                      00027 ;                      Pin 5 - AN2, Axis 3 of accelerometer                    *
+                      00028 ;                      Pin 3 - GP4, output, SR data                            *
+                      00029 ;                      Pin 2 - GP5, output, SR clock                           *
+                      00030 ;                                                                              *
+                      00031 ;*******************************************************************************
+                      00032 
+                      00033 ;------------------------------------------------------------------------------
+                      00034 ; PROCESSOR DECLARATION
+                      00035 ;------------------------------------------------------------------------------
+                      00036 
+                      00037      LIST      p=12F615              ; list directive to define processor
+                      00038      #INCLUDE <P12F615.INC>          ; processor specific variable definitions
+                      00001         LIST
+                      00002 ; P12F615.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                      00423         LIST
+                      00039 
+                      00040 ;------------------------------------------------------------------------------
+                      00041 ; EXTERNALS
+                      00042 ;------------------------------------------------------------------------------
+                      00043 
+                      00044 ;------------------------------------------------------------------------------
+                      00045 ; CONFIGURATION WORD SETUP
+                      00046 ;
+                      00047 ; Set up for a 8 MHz clock, code protection off, brownout off, MCLR functions
+                      00048 ; as a reset, watchdog timer is off, and GPIO 4 and 5 are I/O instead of clock
+                      00049 ;------------------------------------------------------------------------------
+                      00050 
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+2007   3CE4           00051      __CONFIG   _CP_OFF & _BOR_OFF & _MCLRE_ON & _WDT_OFF & _PWRTE_ON & _INTRC_OSC_NOCLKOUT
+                      00052 
+                      00053 ;------------------------------------------------------------------------------
+                      00054 ; VARIABLE DEFINITIONS
+                      00055 ;------------------------------------------------------------------------------
+                      00056                 UDATA
+0000                  00057 red_brt res 1
+0001                  00058 blu_brt res 1
+0002                  00059 grn_brt res 1
+0003                  00060 red_on  res 1
+0004                  00061 blu_on  res 1
+0005                  00062 grn_on  res 1
+0006                  00063 steps   res 1
+0007                  00064 out_reg res 1
+0008                  00065 temp    res 1
+0009                  00066 ADC_RESH res 1
+000A                  00067 color_sel       res 1
+                      00068 
+                      00069 ;------------------------------------------------------------------------------
+                      00070 ; VECTORS
+                      00071 ;------------------------------------------------------------------------------
+                      00072 
+                      00073 ;Effective reset vector
+                      00074 START   CODE    0x0000          ; processor reset vector
+Message[312]: Page or Bank selection not needed for this device.  No code generated.
+                      00075                 pagesel START
+0000   2???           00076                 goto    START       ; go to beginning of program
+                      00077 
+                      00078 ;Subroutine vectors
+                      00079 
+                      00080 ;------------------------------------------------------------------------------
+                      00081 ; MAIN PROGRAM
+                      00082 ;------------------------------------------------------------------------------
+                      00083 
+                      00084 MAIN    CODE
+0000                  00085 START
+                      00086 
+0000   1683           00087                 BANKSEL TRISIO          ;
+0001   300F           00088                 MOVLW   b'001111'       ;Set GP0 to input
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0002   0085           00089                 MOVWF   TRISIO
+0003   1683           00090                 BANKSEL ANSEL           ;
+0004   3051           00091                 MOVLW   B'01010001' ;ADC Frc/16 clock,
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0005   009F           00092                 MOVWF   ANSEL           ;and GP0 as analog
+0006   1283           00093                 BANKSEL ADCON0          ;
+0007   3007           00094                 MOVLW   B'00000111' ;Left justify,
+0008   009F           00095                 MOVWF   ADCON0          ;Vdd Vref, AN0, On
+                      00096 
+0009   1283           00097                 banksel GPIO            ;Initialize GPIO
+000A   0185           00098                 clrf    GPIO    
+                      00099 
+                      00100                 ;reset the brightness counters
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000B   ????           00101                 banksel red_brt
+000C   01??           00102                 clrf    red_brt
+000D   01??           00103                 clrf    grn_brt
+000E   01??           00104                 clrf    blu_brt
+                      00105         
+                      00106                 ;Reset color_sel
+000F   01??           00107                 clrf    color_sel
+                      00108 
+0010                  00109 cycle_top ;Main loop
+0010   3010           00110                 movlw   b'010000'   ;Reset all output registers to 00_01_0000           
+0011   00??           00111                 movwf   red_on
+0012   00??           00112                 movwf   grn_on
+0013   00??           00113                 movwf   blu_on
+0014   01??           00114                 clrf    steps           ;Reset the steps counter
+0015   01??           00115                 clrf    out_reg         ;Reset the output register
+                      00116 
+0016   1283           00117                 banksel ADCON0
+0017   149F           00118                 BSF     ADCON0,GO       ;Start conversion
+                      00119 
+0018                  00120 step_top ;Step loop for PWM
+                      00121                 
+                      00122                 ;Comparing the brightness values to the current step in the PWM cycle
+0018   ????           00123                 banksel steps
+0019   08??           00124                 movf    steps, W        ;Move steps counter into W
+001A   02??           00125                 subwf   red_brt, W      ;Subtract W (steps) from red_brt, store in W
+001B   1C03           00126                 btfss   STATUS, C       ;If the carry bit is 0 (steps > red_brt) clear red_on
+001C   01??           00127                 clrf    red_on          ;red_on set to zero
+                      00128                 
+001D   08??           00129                 movf    steps, W        ;Move steps counter into W
+001E   02??           00130                 subwf   grn_brt, W      ;Subtract W (steps) from grn_brt, store in W
+001F   1C03           00131                 btfss   STATUS, C       ;If the carry bit is 0 (steps > grn_brt) clear grn_on
+0020   01??           00132                 clrf    grn_on          ;grn_on set to zero
+                      00133 
+0021   08??           00134                 movf    steps, W        ;Move steps counter into W
+0022   02??           00135                 subwf   blu_brt, W      ;Subtract W (steps) from blu_brt, store in W
+0023   1C03           00136                 btfss   STATUS, C       ;If the carry bit is 0 (steps > blu_brt) clear blu_on
+0024   01??           00137                 clrf    blu_on          ;blu_on set to zero     
+                      00138 
+                      00139                 ;Output the RGB on/off values to the shift register
+0025   08??           00140                 movf    red_on, W       ;Move red_on to W
+0026   1283           00141                 banksel GPIO
+0027   0085           00142                 movwf   GPIO            ;Place red_on on GPIO, setting up the data to be clocked in
+0028   1685           00143                 bsf             GPIO, .5
+0029   0185           00144                 clrf    GPIO
+                      00145 
+002A   ????           00146                 banksel grn_on
+002B   08??           00147                 movf    grn_on, W       ;Move grn_on to W
+002C   1283           00148                 banksel GPIO
+002D   0085           00149                 movwf   GPIO            ;Place grn_on on GPIO, setting up the data to be clocked in
+002E   1685           00150                 bsf             GPIO, .5
+002F   0185           00151                 clrf    GPIO
+                      00152 
+0030   ????           00153                 banksel blu_on
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0031   08??           00154                 movf    blu_on, W       ;Move blu_on to W
+0032   1283           00155                 banksel GPIO
+0033   0085           00156                 movwf   GPIO            ;Place blu_on on GPIO, setting up the data to be clocked in
+0034   1685           00157                 bsf             GPIO, .5
+0035   0185           00158                 clrf    GPIO
+                      00159 
+                      00160                 ;Delay to finish up the cycle with proper timing
+0036   3028           00161                 movlw   .40                     ;Set the temporary register to 40
+0037   ????           00162                 banksel temp
+0038   00??           00163                 movwf   temp
+0039                  00164 dly1
+0039   0B??           00165                 decfsz  temp, f         ;Decrement it, if zero go out of the loop, otherwise loop back a
+                            round
+003A   2???           00166                 goto dly1                       ;Makes a delay of about 120 cycles
+                      00167 
+003B   0F??           00168                 incfsz  steps, f        ;Increment steps, if it's zero (back around past 255), skip the 
+                            loop break, otherwise goto the top
+003C   2???           00169                 goto step_top           ;Break the loop ;Disregard comments
+003D   2???           00170                 goto cycle_end          ;Go back to the top with new steps value
+                      00171 
+003E                  00172 cycle_end ;End of the cycle stuff, messing with brightness values before going back for another cycle
+                      00173                 
+003E   1283           00174                 banksel ADCON0
+003F   189F           00175 adc_tst BTFSC   ADCON0,NOT_DONE         ;Is conversion done?
+0040   2???           00176                 GOTO    adc_tst         ;No, test again
+0041   1283           00177                 BANKSEL ADRESH          ;
+0042   081E           00178                 MOVF    ADRESH,W        ;Read upper 8 bits
+0043   ????           00179                 banksel ADC_RESH
+0044   00??           00180                 MOVWF   ADC_RESH        ;Store in GPR space
+                      00181 
+0045   3032           00182                 MOVLW   .50
+0046   02??           00183                 subwf   ADC_RESH,f      ;Apply a negative 50 offset to the value
+                      00184 
+Message[305]: Using default destination of 1 (file).
+0047   0D??           00185                 rlf             color_sel       ;Roll color_sel over two bits, then OR it with 01h
+Message[305]: Using default destination of 1 (file).
+0048   0D??           00186                 rlf             color_sel
+0049   3001           00187                 movlw   01h
+004A   04??           00188                 iorwf   color_sel,W     ;Then put that on ADCON0
+004B   009F           00189                 movwf   ADCON0          ;This changes which analog input is being read
+Message[305]: Using default destination of 1 (file).
+004C   0C??           00190                 rrf             color_sel       ;Roll color_sel back
+Message[305]: Using default destination of 1 (file).
+004D   0C??           00191                 rrf             color_sel
+                      00192 
+004E   ????           00193                 banksel red_brt
+004F   08??           00194                 movf    color_sel,W
+0050   3C00           00195                 sublw   .0
+0051   1903           00196                 btfsc   STATUS,Z
+0052   2???           00197                 goto    make_red
+                      00198 
+0053   ????           00199                 banksel grn_brt
+0054   08??           00200                 movf    color_sel,W
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0055   3C01           00201                 sublw   .1
+0056   1903           00202                 btfsc   STATUS,Z
+0057   2???           00203                 goto    make_grn
+                      00204 
+0058   ????           00205                 banksel blu_brt
+0059   08??           00206                 movf    color_sel,W
+005A   3C02           00207                 sublw   .2
+005B   1903           00208                 btfsc   STATUS,Z
+005C   2???           00209                 goto    make_blu
+                      00210 
+005D                  00211 make_red
+005D   08??           00212                 movf    ADC_RESH,W
+005E   00??           00213                 movwf   red_brt
+005F   2???           00214                 goto    continue
+                      00215 
+0060                  00216 make_grn
+0060   08??           00217                 movf    ADC_RESH,W
+0061   00??           00218                 movwf   grn_brt
+0062   2???           00219                 goto    continue
+                      00220 
+0063                  00221 make_blu
+0063   08??           00222                 movf    ADC_RESH,W
+0064   00??           00223                 movwf   blu_brt
+                      00224 
+0065                  00225 continue
+Message[305]: Using default destination of 1 (file).
+0065   0A??           00226                 incf    color_sel       ;Increment color_sel
+0066   08??           00227                 movf    color_sel,W     ;Put color_sel in W
+0067   3C03           00228                 sublw   .3                      ;Subtract W from 3
+0068   1903           00229                 btfsc   STATUS,Z        ;If the result wasn't 0 (color_sel != 3), then don't reset color
+                            _sel
+0069   01??           00230                 clrf    color_sel               
+                      00231 
+006A   2???           00232                 goto    cycle_top       ;Go back for another PWM cycle
+                      00233                         
+                      00234 
+3CE4                  00235         END
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADCON0                            0000001F
+ADCS0                             00000004
+ADCS1                             00000005
+ADCS2                             00000006
+ADC_RESH                          00000009
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+AN0                               00000000
+AN1                               00000001
+AN2                               00000002
+AN3                               00000003
+ANSEL                             0000009F
+APFCON                            00000093
+C                                 00000000
+C1CH0                             00000000
+C1HYS                             00000003
+C1IE                              00000003
+C1IF                              00000003
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1SYNC                            00000000
+C1VREN                            00000007
+CCP1CON                           00000015
+CCP1IE                            00000005
+CCP1IF                            00000005
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCPR1H                            00000014
+CCPR1L                            00000013
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CMCH                              00000000
+CMCON0                            0000001A
+CMCON1                            0000001C
+CMHYS                             00000003
+CMIE                              00000003
+CMIF                              00000003
+CMOE                              00000005
+CMON                              00000007
+CMPOL                             00000004
+CMR                               00000002
+CMSYNC                            00000000
+CMVREN                            00000007
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+COUT                              00000006
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+ECCPAS                            00000017
+ECCPAS0                           00000004
+ECCPAS1                           00000005
+ECCPAS2                           00000006
+ECCPASE                           00000007
+F                                 00000001
+FSR                               00000004
+FVREN                             00000004
+GIE                               00000007
+GO                                00000001
+GO_DONE                           00000001
+GP0                               00000000
+GP1                               00000001
+GP2                               00000002
+GP3                               00000003
+GP4                               00000004
+GP5                               00000005
+GPIE                              00000003
+GPIF                              00000000
+GPIO                              00000005
+GPIO0                             00000000
+GPIO1                             00000001
+GPIO2                             00000002
+GPIO3                             00000003
+GPIO4                             00000004
+GPIO5                             00000005
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOC                               00000096
+IOC0                              00000000
+IOC1                              00000001
+IOC2                              00000002
+IOC3                              00000003
+IOC4                              00000004
+IOC5                              00000005
+IOCA                              00000096
+IOCA0                             00000000
+IOCA1                             00000001
+IOCA2                             00000002
+IOCA3                             00000003
+IOCA4                             00000004
+IOCA5                             00000005
+IRP                               00000007
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_GPPU                          00000007
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OPTION_REG                        00000081
+OSCTUNE                           00000090
+P1ASEL                            00000000
+P1BSEL                            00000001
+P1M                               00000007
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PDC0                              00000000
+PDC1                              00000001
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PR2                               00000092
+PRSEN                             00000007
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+PWM1CON                           00000016
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RP0                               00000005
+RP1                               00000006
+START                             00000000
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1ACS                             00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T1GINV                            00000007
+T1GSEL                            00000004
+T1GSS                             00000001
+T1IE                              00000000
+T1IF                              00000000
+T1OSCEN                           00000003
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+T2IE                              00000001
+T2IF                              00000001
+T2ON                              00000002
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISIO                            00000085
+TRISIO0                           00000000
+TRISIO1                           00000001
+TRISIO2                           00000002
+TRISIO3                           00000003
+TRISIO4                           00000004
+TRISIO5                           00000005
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+VCFG                              00000006
+VP6EN                             00000004
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000019
+VRR                               00000005
+W                                 00000000
+WPU                               00000095
+WPU0                              00000000
+WPU1                              00000001
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WPU2                              00000002
+WPU4                              00000004
+WPU5                              00000005
+WPUA                              00000095
+WPUA0                             00000000
+WPUA1                             00000001
+WPUA2                             00000002
+WPUA4                             00000004
+WPUA5                             00000005
+Z                                 00000002
+_BOR_NSLEEP                       00003EFF
+_BOR_OFF                          00003CFF
+_BOR_ON                           00003FFF
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_HS_OSC                           00003FFA
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_IOSCFS4                          00003F7F
+_IOSCFS8                          00003FFF
+_IOSCFS_4MHZ                      00003F7F
+_IOSCFS_8MHZ                      00003FFF
+_LP_OSC                           00003FF8
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FF9
+__12F615                          00000001
+adc_tst                           0000003F
+blu_brt                           00000001
+blu_on                            00000004
+color_sel                         0000000A
+continue                          00000065
+cycle_end                         0000003E
+cycle_top                         00000010
+dly1                              00000039
+grn_brt                           00000002
+grn_on                            00000005
+make_blu                          00000063
+make_grn                          00000060
+make_red                          0000005D
+out_reg                           00000007
+red_brt                           00000000
+MPASM  5.37            PIC12F615_TEMPLATE.ASM   12-22-2010  16:40:49         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+red_on                            00000003
+step_top                          00000018
+steps                             00000006
+temp                              00000008
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     8 reported,     0 suppressed
+
+
